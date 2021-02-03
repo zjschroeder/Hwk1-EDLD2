@@ -6,6 +6,11 @@ output: html_document
 ---
 
 #Use at least 3 mutating joins
+```{r}
+df <- right_join(studentAssessment, studentInfo, by = "id_student")
+df <- left_join(df, assessments, by = c("id_assessment", "code_presentation", "code_module"))
+df <- full_join(df, courses, by = c("code_presentation", "code_module"))
+```
 
 #Use at least 1 filtering join
 
