@@ -9,13 +9,14 @@ output: html_document
 library(dplyr)
 library(rio)
 library(ggplot2)
+library(here)
 ```
 
 
 ```{r}
-here::here()
+here::here() # this now takes me to the correct folder
 
-assessments <- import("assessments.csv")
+assessments <- import(here::here("assessments.csv")) # this still won't work
 courses <- import("courses.csv")
 studentAssessment <- import("studentAssessment.csv")
 studentInfo <- import("studentInfo.csv")
@@ -33,6 +34,15 @@ df <- full_join(df, courses, by = c("code_presentation", "code_module"))
 ```
 
 #Use at least 1 filtering join
+```{r}
+TMA <- assessments %>%
+  filter(assessment_type == "TMA") %>% 
+  select(assessment_type)
+
+df <- df %>% 
+  semi_join(TMA)
+```
+
 
 #Produce at least 3 data displays <-- Zach
 
