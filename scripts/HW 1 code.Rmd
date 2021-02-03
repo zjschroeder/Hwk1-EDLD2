@@ -5,6 +5,12 @@ date: "2/2/2021"
 output: html_document
 ---
 
+```{r}
+library(dplyr)
+library(rio)
+library(ggplot2)
+```
+
 #Use at least 3 mutating joins
 ```{r}
 df <- right_join(studentAssessment, studentInfo, by = "id_student")
