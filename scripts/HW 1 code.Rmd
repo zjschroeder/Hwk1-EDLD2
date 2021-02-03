@@ -11,6 +11,20 @@ library(rio)
 library(ggplot2)
 ```
 
+
+```{r}
+here::here()
+
+assessments <- import("assessments.csv")
+courses <- import("courses.csv")
+studentAssessment <- import("studentAssessment.csv")
+studentInfo <- import("studentInfo.csv")
+studentReg <- import("studentRegistration.csv")
+studentVle <- import("studentVle.csv")
+vle <- import("vle.csv")
+```
+
+
 #Use at least 3 mutating joins
 ```{r}
 df <- right_join(studentAssessment, studentInfo, by = "id_student")
