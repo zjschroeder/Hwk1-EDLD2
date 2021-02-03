@@ -14,11 +14,11 @@ df <- full_join(df, courses, by = c("code_presentation", "code_module"))
 
 #Use at least 1 filtering join
 
-#Produce at least 3 data displays <-- did not do yet
+#Produce at least 3 data displays <-- Zach
 
 #Reproduce the figure
 ##reordering factors, etc 
 
 ##plot
 
-##format (colors, labels) <--need to do colors
+##format (colors, labels) <-- Zach
