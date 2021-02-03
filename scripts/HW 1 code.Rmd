@@ -5,3 +5,15 @@ date: "2/2/2021"
 output: html_document
 ---
 
+#Use at least 3 mutating joins
+
+#Use at least 1 filtering join
+
+#Produce at least 3 data displays <-- did not do yet
+
+#Reproduce the figure
+##reordering factors, etc 
+
+##plot
+
+##format (colors, labels) <--need to do colors
