@@ -13,7 +13,9 @@ library(here)
 library(forcats)
 library(tidyverse)
 library(cowplot)
+library(colorspace)
 library(colorblindr)
+
 ```
 
 ```{r}
@@ -79,6 +81,7 @@ df %>%
        caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
        fill = "Gender")+
   scale_fill_OkabeIto() +
+  geom_hline(aes(yintercept = 0)) +
   theme_minimal()
 ```
 
