@@ -22,8 +22,8 @@ courses <- import(here::here("data/courses.csv"))
 studentAssessment <- import(here::here("data/studentAssessment.csv"))
 studentInfo <- import(here::here("data/studentInfo.csv"))
 studentReg <- import(here::here("data/studentRegistration.csv"))
-#studentVle <- import(here::here("data/studentVle.csv")) # there is no such file
-#vle <- import(here::here("data/vle.csv")) # no such file
+studentVle <- import(here::here("data/studentVle.csv")) # there is no such file
+vle <- import(here::here("data/vle.csv")) # no such file
 ```
 
 #Use at least 3 mutating joins
