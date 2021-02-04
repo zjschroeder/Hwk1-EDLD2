@@ -123,8 +123,8 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   facet_wrap(~fct_reorder(final_result, average_score), nrow = 4)+
   labs(title = "Average TMA Scores",
        subtitle = "Results displayed by Education, gender, and Final Result Designation",
-       x = "Average Score",
-       y = "Highest Education",
+       y = "Average Score",
+       x = "Highest Education",
        caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
        color = "Gender")+
   theme_minimal()
