@@ -53,7 +53,7 @@ df %>%
   summarise(.groups = "keep",
             ms = mean(score, na.rm = T)) %>% 
   ggplot() +
-  geom_line(aes(x = num_of_prev_attempts, y = ms)) +
+  geom_line(aes(x = num_of_prev_attempts, y = ms), color = "cornflowerblue") +
   labs(title = "Average Passing Score in Each Region by Number of Previous Attempts",
        y = "Average Score",
        x = "Number of Previous Attempts",
