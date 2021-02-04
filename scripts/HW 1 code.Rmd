@@ -10,6 +10,8 @@ library(dplyr)
 library(rio)
 library(ggplot2)
 library(here)
+library(forcats)
+
 ```
 
 ```{r}
@@ -51,7 +53,6 @@ df$highest_education <- as.factor(df$highest_education)
 df <- df %>% 
   group_by(highest_education, final_result, gender) %>% 
   mutate(average_score = mean(score, na.rm = T))
-library(forcats)
 ```
 
 ##plot
