@@ -58,7 +58,7 @@ df <- df %>%
 ```{r}
 #reproducing the plot
 ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
-  geom_line(aes(group = highest_education), color = "cornflowerblue") + 
+  geom_line(aes(group = highest_education), color = "#636363") + 
   geom_point(aes(color = gender)) + 
   scale_color_manual(values = c("#9ecae1", "#3182bd")) +
   coord_flip() +
