@@ -133,3 +133,21 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   theme_minimal()
 ```
 
+```{r}
+ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
+  geom_line(aes(color = highest_education))+ 
+   scale_color_manual(values = c(rep("#636363",4), "#fc9272"))+ 
+  geom_point(aes(fill = factor(gender)), size=3, shape=21, stroke=0) + 
+  scale_fill_manual(values = c("#9ecae1", "#3182bd")) +
+  coord_flip() +
+  facet_wrap(~fct_reorder(final_result, average_score), nrow = 4)+
+  labs(title = "Average TMA Scores",
+       subtitle = "Results displayed by Education, gender, and Final Result Designation",
+       y = "Average Score",
+       x = "Highest Education",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
+       color = "Gender")+
+  theme_minimal()
+  
+```
+
