@@ -12,7 +12,6 @@ library(ggplot2)
 library(here)
 ```
 
-
 ```{r}
 here::here()
 
@@ -24,7 +23,6 @@ studentReg <- import(here::here("data/studentRegistration.csv"))
 #studentVle <- import(here::here("data/studentVle.csv")) # there is no such file
 #vle <- import(here::here("data/vle.csv")) # no such file
 ```
-
 
 #Use at least 3 mutating joins
 ```{r}
@@ -43,12 +41,30 @@ df <- df %>%
   semi_join(TMA)
 ```
 
-
 #Produce at least 3 data displays <-- Zach
 
 #Reproduce the figure
 ##reordering factors, etc 
+```{r}
+#prep data/as.factor, etc
+df$highest_education <- as.factor(df$highest_education)
+df <- df %>% 
+  group_by(highest_education, final_result, gender) %>% 
+  mutate(average_score = mean(score, na.rm = T))
+library(forcats)
+```
 
 ##plot
+```{r}
+#reproducing the plot
+ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
+  geom_line(aes(group = highest_education), color = "cornflowerblue") + 
+  geom_point(aes(color = gender)) +             #CHANGE TO BLUE COLOR
+  coord_flip() +
+  facet_wrap(~fct_reorder(final_result, average_score), nrow = 4)+
+  theme_minimal()
+# add the labels
+
+```
 
 ##format (colors, labels) <-- Zach
