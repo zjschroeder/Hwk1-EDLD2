@@ -22,7 +22,6 @@ courses <- import(here::here("data/courses.csv"))
 studentAssessment <- import(here::here("data/studentAssessment.csv"))
 studentInfo <- import(here::here("data/studentInfo.csv"))
 studentReg <- import(here::here("data/studentRegistration.csv"))
-studentVle <- import(here::here("data/studentVle.csv")) # there is no such file
 vle <- import(here::here("data/vle.csv")) # no such file
 ```
 
@@ -60,12 +59,16 @@ df <- df %>%
 #reproducing the plot
 ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   geom_line(aes(group = highest_education), color = "cornflowerblue") + 
-  geom_point(aes(color = gender)) +             #CHANGE TO BLUE COLOR
+  geom_point(aes(color = gender)) + 
+  #scale_color_manual() +
   coord_flip() +
   facet_wrap(~fct_reorder(final_result, average_score), nrow = 4)+
+  labs(title = "Average TMA Scores",
+       subtitle = "Results displayed by Education, gender, and Final Result Designation",
+       x = "Average Score",
+       y = "Highest Education",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset")+
   theme_minimal()
-# add the labels
-
 ```
 
 ## Figures
