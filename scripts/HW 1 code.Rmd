@@ -43,7 +43,7 @@ df <- df %>%
   semi_join(TMA)
 ```
 
-#Produce at least 3 data displays <-- Zach
+
 
 #Reproduce the figure
 ##reordering factors, etc 
@@ -66,6 +66,19 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   theme_minimal()
 # add the labels
 
+```
+
+## Figures
+```{r}
+#Figure 1
+```
+
+```{r}
+#Figure 2
+```
+
+```{r}
+#Figure 3
 ```
 
 ##format (colors, labels) <-- Zach
