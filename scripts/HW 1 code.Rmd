@@ -11,7 +11,9 @@ library(rio)
 library(ggplot2)
 library(here)
 library(forcats)
-
+library(tidyverse)
+library(cowplot)
+library(colorblindr)
 ```
 
 ```{r}
@@ -42,6 +44,62 @@ df <- df %>%
   semi_join(TMA)
 ```
 
+## Figures: Previous attempts to succeed by region
+```{r}
+df %>% 
+  filter(final_result == "Pass") %>% 
+  group_by(region) %>%
+  group_by(num_of_prev_attempts, .add = T) %>% 
+  summarise(.groups = "keep",
+            ms = mean(score, na.rm = T)) %>% 
+  ggplot() +
+  geom_line(aes(x = num_of_prev_attempts, y = ms)) +
+  labs(title = "Average Passing Score in Each Region by Number of Previous Attempts",
+       y = "Average Score",
+       x = "Number of Previous Attempts",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
+       color = "Region")+
+  facet_wrap(~ region, nrow = 3) +
+  theme_minimal()
+```
+
+```{r}
+df %>% 
+  filter(final_result == "Pass") %>% 
+  group_by(num_of_prev_attempts, .add = T) %>% 
+  group_by(gender, .add = T) %>% 
+  summarise(.groups = "keep",
+            ms = mean(score, na.rm = T)) %>% 
+  ggplot() +
+  geom_bar(aes(x = num_of_prev_attempts, y = ms, fill = gender),
+           stat = "identity", position = "dodge") +
+  labs(title = "Average Passing Score by Gender & Number of Previous Attempts",
+       y = "Average Score",
+       x = "Number of Previous Attempts",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
+       fill = "Gender")+
+  scale_fill_OkabeIto() +
+  theme_minimal()
+```
+
+```{r}
+df %>% 
+  group_by(final_result) %>% 
+  group_by(highest_education, .add = T) %>%
+  group_by(num_of_prev_attempts, .add = T) %>% 
+  summarise(.groups = "keep",
+            ms = mean(score, na.rm = T)) %>% 
+  ggplot() +
+  geom_line(aes(x = num_of_prev_attempts, y = ms, color = final_result)) +
+  labs(title = "Average Passing Score in Each Region by Number of Previous Attempts",
+       y = "Average Score",
+       x = "Number of Previous Attempts",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
+       color = "Final Result")+
+  facet_wrap(~ highest_education, nrow = 3) +
+  scale_fill_OkabeIto() +
+  theme_minimal()
+```
 
 
 #Reproduce the figure
@@ -72,17 +130,3 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   theme_minimal()
 ```
 
-## Figures
-```{r}
-#Figure 1
-```
-
-```{r}
-#Figure 2
-```
-
-```{r}
-#Figure 3
-```
-
-##format (colors, labels) <-- Zach
