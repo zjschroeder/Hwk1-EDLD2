@@ -133,6 +133,20 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   theme_minimal()
 ```
 
+# Data wrangling for extra credit
+```{r}
+l = df %>% 
+  group_by(highest_education, final_result, gender) %>% 
+  mutate(average_score = mean(score, na.rm = T)) %>%
+  select(highest_education, final_result, gender, average_score, id_student) %>% 
+  pivot_wider(names_from = gender, values_from = average_score) %>% 
+  group_by(highest_education, final_result) 
+  
+  
+View(l)
+```
+
+# Attempt 1
 ```{r}
 ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   geom_line(aes(color = highest_education))+ 
