@@ -109,8 +109,8 @@ df %>%
 ##reordering factors, etc 
 ```{r}
 #prep data/as.factor, etc
-df$highest_education <- as.factor(df$highest_education)
 df <- df %>% 
+  mutate(highest_education = factor(df$highest_education)) %>% 
   group_by(highest_education, final_result, gender) %>% 
   mutate(average_score = mean(score, na.rm = T))
 ```
@@ -135,18 +135,53 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
 
 # Data wrangling for extra credit
 ```{r}
-l = df %>% 
+names(df)
+
+df %>% 
+  as_tibble() %>% 
+  select(average_score, gender, id_student) %>%
+   pivot_wider(names_from = gender, values_from = average_score)
+  
+
+ 
+ df %>% 
   group_by(highest_education, final_result, gender) %>% 
   mutate(average_score = mean(score, na.rm = T)) %>%
-  select(highest_education, final_result, gender, average_score, id_student) %>% 
+    select(highest_education, final_result, gender, average_score, gender,  id_student, id_assessment) %>% 
+  spread(key = highest_education, value = average_score) %>% 
+  group_by(gender) %>% 
+    
+    spread(color.line = ifelse())
+  select(highest_education, final_result, gender, average_score, id_student, id_assessment) %>% 
   pivot_wider(names_from = gender, values_from = average_score) %>% 
-  group_by(highest_education, final_result) 
+
+  mutate(M = as.numeric(M),
+          F = as.numeric(F)) %>% 
+  mutate(new.col = ifelse(M > F, male, female))
   
-  
-View(l)
+View(l)  
 ```
 
 # Attempt 1
+```{r}
+ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
+  geom_line(aes(color = highest_education))+ 
+   scale_color_manual(values = c(rep("#636363",4), "#fc9272"))+ 
+  geom_point(aes(fill = factor(gender)), size=3, shape=21, stroke=0) + 
+  scale_fill_manual(values = c("#9ecae1", "#3182bd")) +
+  coord_flip() +
+  facet_wrap(~fct_reorder(final_result, average_score), nrow = 4)+
+  labs(title = "Average TMA Scores",
+       subtitle = "Results displayed by Education, gender, and Final Result Designation",
+       y = "Average Score",
+       x = "Highest Education",
+       caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
+       color = "Gender")+
+  theme_minimal()
+  
+```
+
+# Attempt 2
 ```{r}
 ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
   geom_line(aes(color = highest_education))+ 
