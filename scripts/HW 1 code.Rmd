@@ -6,11 +6,12 @@ output: html_document
 ---
 
 ```{r}
-library(dplyr)
+# All of the below that I commented out are loaded when you load the tidyverse
+#library(dplyr)
 library(rio)
-library(ggplot2)
+#library(ggplot2)
 library(here)
-library(forcats)
+#library(forcats)
 library(tidyverse)
 library(cowplot)
 library(colorspace)
@@ -19,24 +20,68 @@ library(colorblindr)
 ```
 
 ```{r}
-here::here()
+#here::here()
 
-assessments <- import(here::here("data/assessments.csv"))
-courses <- import(here::here("data/courses.csv"))
-studentAssessment <- import(here::here("data/studentAssessment.csv"))
-studentInfo <- import(here::here("data/studentInfo.csv"))
+assessments <- import(here::here("data", "assessments.csv"))
+courses <- import(here::here("data", "courses.csv"))
+studentAssessment <- import(here::here("data", "studentAssessment.csv"))
+studentInfo <- import(here::here("data", "studentInfo.csv"))
 studentReg <- import(here::here("data/studentRegistration.csv"))
-vle <- import(here::here("data/vle.csv")) # no such file
+vle <- import(here::here("data", "vle.csv")) # no such file # Works for me! :)
 ```
 
 #Use at least 3 mutating joins
 ```{r}
 df <- right_join(studentAssessment, studentInfo, by = "id_student")
-df <- left_join(df, assessments, by = c("id_assessment", "code_presentation", "code_module"))
+
+# The above is an error. The `id_student` column does not uniquely
+# define rows in either dataset. We can verify this with
+
+studentAssessment %>% 
+  count(id_student) %>% 
+  filter(n > 1)
+
+studentInfo %>% 
+  count(id_student) %>% 
+  filter(n > 1)
+
+# Given that each of the above return data frames showing observations with
+# duplicate values, we can't use this key (i.e., it is not a key by itself).
+# You have conducted a many-to-many join. As you may recall me mentioning, a
+# one-to-many join is fine and commonplace, but a many-to-many join is not,
+# and is nearly always an error (as it is here)
+
+# The preceding datasets actually cannot be joined directly. This is because
+# they do not have a key in common. The keys for the two datasets are
+
+studentAssessment %>%
+	count(id_student, id_assessment) %>%
+	filter(n > 1)
+
+studentInfo %>%
+	count(id_student, code_module, code_presentation) %>%
+	filter(n > 1)
+
+# But you could do a two-step process like this
+
+d <- left_join(studentAssessment, assessments) #%>%
+# > Joining, by = "id_assessment"
+
+d <- left_join(d, studentInfo)
+# > Joining, by = c("id_student", "code_module", "code_presentation")
+
+# I've removed 3 points here.
+
+# try not to go beyond 80 characters. You can setup a ruler in RStudio to
+# help you avoid that. It will make your code print more easily across a 
+# variety of screens and output types (e.g., PDF)
+
+df <- left_join(df, assessments, 
+                by = c("id_assessment", "code_presentation", "code_module"))
 df <- full_join(df, courses, by = c("code_presentation", "code_module"))
 ```
 
-#Use at least 1 filtering join
+# Use at least 1 filtering join
 ```{r}
 TMA <- assessments %>%
   filter(assessment_type == "TMA") %>% 
@@ -44,16 +89,17 @@ TMA <- assessments %>%
 
 df <- df %>% 
   semi_join(TMA)
+
+# Hmm... not the most innovative use of `semi_join` but I'll give it to you.
 ```
 
 ## Figures: Previous attempts to succeed by region
 ```{r}
 df %>% 
   filter(final_result == "Pass") %>% 
-  group_by(region) %>%
-  group_by(num_of_prev_attempts, .add = T) %>% 
-  summarise(.groups = "keep",
-            ms = mean(score, na.rm = T)) %>% 
+  group_by(region, num_of_prev_attempts) %>%
+  summarise(.groups = "keep", # I don't think this is needed
+            ms = mean(score, na.rm = TRUE)) %>% 
   ggplot() +
   geom_line(aes(x = num_of_prev_attempts, y = ms), color = "cornflowerblue") +
   labs(title = "Average Passing Score in Each Region by Number of Previous Attempts",
@@ -63,18 +109,21 @@ df %>%
        color = "Region")+
   facet_wrap(~ region, nrow = 3) +
   theme_minimal()
+
+# Looks nice! I wonder though if it might have been better to have all
+# the lines in a single plot to see if any one region was different from the
+# overall trend. That's sort of hard to tell in this case.
 ```
 
 ```{r}
 df %>% 
   filter(final_result == "Pass") %>% 
-  group_by(num_of_prev_attempts, .add = T) %>% 
-  group_by(gender, .add = T) %>% 
+  group_by(num_of_prev_attempts, gender) %>% 
   summarise(.groups = "keep",
             ms = mean(score, na.rm = T)) %>% 
   ggplot() +
-  geom_bar(aes(x = num_of_prev_attempts, y = ms, fill = gender),
-           stat = "identity", position = "dodge") +
+  geom_col(aes(x = num_of_prev_attempts, y = ms, fill = gender),
+           position = "dodge") + # you don't need the stat part if you use `geom_col()`
   labs(title = "Average Passing Score by Gender & Number of Previous Attempts",
        y = "Average Score",
        x = "Number of Previous Attempts",
@@ -83,13 +132,13 @@ df %>%
   scale_fill_OkabeIto() +
   geom_hline(aes(yintercept = 0)) +
   theme_minimal()
+
+# Looks really nice!
 ```
 
 ```{r}
 df %>% 
-  group_by(final_result) %>% 
-  group_by(highest_education, .add = T) %>%
-  group_by(num_of_prev_attempts, .add = T) %>% 
+  group_by(final_result, highest_education, num_of_prev_attempts) %>% 
   summarise(.groups = "keep",
             ms = mean(score, na.rm = T)) %>% 
   ggplot() +
@@ -102,6 +151,9 @@ df %>%
   facet_wrap(~ highest_education, nrow = 3) +
   scale_fill_OkabeIto() +
   theme_minimal()
+
+# This one is maybe a bit busy, but I guess it depend a bit on what you're 
+# trying to communicate. 
 ```
 
 
@@ -110,9 +162,9 @@ df %>%
 ```{r}
 #prep data/as.factor, etc
 df <- df %>% 
-  mutate(highest_education = factor(df$highest_education)) %>% 
+  mutate(highest_education = factor(highest_education)) %>% #shouldn't ever need $ when working in the tidyverse
   group_by(highest_education, final_result, gender) %>% 
-  mutate(average_score = mean(score, na.rm = T))
+  mutate(average_score = mean(score, na.rm = TRUE))
 ```
 
 ##plot
@@ -131,12 +183,12 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
        caption = "Data from Kuzilek, Hlosta, & Zdrahal (2017). https://analyse.kmi.open.ac.uk/open_dataset",
        color = "Gender")+
   theme_minimal()
+
+# Looks great!
 ```
 
 # Data wrangling for extra credit
 ```{r}
-names(df)
-
 df %>% 
   as_tibble() %>% 
   select(average_score, gender, id_student) %>%
@@ -146,7 +198,7 @@ df %>%
  
  df %>% 
   group_by(highest_education, final_result, gender) %>% 
-  mutate(average_score = mean(score, na.rm = T)) %>%
+  mutate(average_score = mean(score, na.rm = TRUE)) %>%
     select(highest_education, final_result, gender, average_score, gender,  id_student, id_assessment) %>% 
   spread(key = highest_education, value = average_score) %>% 
   group_by(gender) %>% 
@@ -198,5 +250,6 @@ ggplot(df, aes(fct_reorder(highest_education, average_score), average_score)) +
        color = "Gender")+
   theme_minimal()
   
+# Close! But not quite. I'll show you how I did it when we go over the homework in class.
 ```
 
